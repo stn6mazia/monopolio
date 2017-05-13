@@ -1,0 +1,291 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="iso-8859-1">
+	<title>Tutorial</title>
+	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+	<style>
+		pre {
+			background-color:#eee;
+			overflow:auto;
+			margin:0 0 1em;
+			padding:.5em 1em;
+		}
+
+		pre code,
+		pre .line-number {
+			/* Ukuran line-height antara teks di dalam tag <code> dan <span class="line-number"> harus sama! */
+			/* font:normal normal 12px/14px "Courier New",Courier,Monospace; */
+			color:black;
+			display:block;
+		}
+
+		pre .line-number {
+			float:left;
+			margin:0 1em 0 -1em;
+			border-right:1px solid;
+			text-align:right;
+		}
+
+		pre .line-number span {
+			display:block;
+			padding:0 .5em 0 1em;
+		}
+
+		pre .cl {
+			display:block;
+			clear:both;
+		}
+		.underline {
+			text-decoration: underline;
+		}
+		.marca-texto {
+			background: #D9FF00;
+			padding: 2px 3px;
+		}
+		.sequence {
+			font-size: 18px;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<h2>Configurando o Apache e o PHP</h2>
+			<ol>
+				<li>
+					Iniciar o Wamp
+				</li>
+				<li>
+					Abrir o arquivo de configuração do Apache httpd.conf<br>
+					<small>Clique no ícone do Wamp -> apache -> httpd.conf</small>
+				</li>
+				<li>
+					Substituir as linhas:<br>
+					<code>DocumentRoot "C:\wamp\www"</code> e <code>&lt;Directory C:\wamp\www\&gt;</code><br>
+					Por:<br>
+					<code>DocumentRoot "E:\NetbeansProjects\"</code> e <code>&lt;Directory E:\NetbeansProjects\&gt;</code><br>
+				</li>
+				<li>
+					Colocar a pasta do projeto no diretório D:\NetbeansProjects
+				</li>
+				<li>
+					Habilitar o modo rewrite do Apache<br>
+					<small>Clique no ícone do Wamp -> Apache -> Apache modules</small><br>
+					Marque a opção [rewrite_module]
+				</li>
+				<li>
+					Acesse a URL: <a href="http://localhost/prontuariodigital">localhost/prontuariodigital</a>
+				</li>
+			</ol>
+			
+			<h2>Utilização do MVC</h2>
+
+			<h3>Criando a <b>V</b>iew</h3>
+
+			<div class="alert alert-warning">
+			    <b>Atenção! </b>Toda <em>View</em> <span class="underline">deve</span> ser criada na pasta views do projeto
+		    </div>
+
+			<p class="sequence">
+				1) Crie um arquivo chamado <em>pessoas.php</em> dentro da pasta view com o seguinte código:
+			</p>
+			
+<pre>
+&lt;?php include_once VIEWS_PATH . 'layouts/default/header.php'; ?&gt;
+
+    &lt;div class="content-wrapper"&gt;
+        &lt;section class="content"&gt;
+
+            &lt;h2&gt;View da página pessoas.php&lt;/h2&gt;
+
+        &lt;/section&gt;
+    &lt;/div&gt;
+
+&lt;?php include_once VIEWS_PATH . 'layouts/default/footer.php'; ?&gt;</pre>
+
+				<b>O que aconteceu:</b>
+				<ol>
+					<li>Na linha 2 incluímos o header do layout</li>
+					<li>Nas linhas 3 e 4 criamos os dois elementos principais para envelopar (wrap) o conteúdo principal da página</li>
+					<li>Na linha 6 incluimos o conteúdo da página, no caso, apenas uma tag de título <em>&lt;h2&gt;</em> com um texto dentro</li>
+					<li>Nas linhas 8 e 9 fechamos as tags do conteúdo principal</li>
+					<li>E por fim na linha 11 incluímos o footer do layout</li>
+				</ol>
+
+				<div class="alert alert-warning">
+				    <b>Atenção!</b> Toda <em>View</em> <span class="underline">precisa</span> de um controller para que este a carregue
+			    </div>
+
+			    <h3>Criando a <b>C</b>ontroller</h3>
+
+				<p class="sequence">2) No diretório controller crie um arquivo chamado <em>PessoasController.php</em> com o seguinte código:</p>
+<pre>
+&lt;?php
+class PessoasController extends Controller
+{	
+	public function index()
+	{
+        $this->loadView('pessoas');
+	}
+}</pre>
+			<b>O que aconteceu:</b>
+			<ol>
+				<li>
+					Na linha 2 criamos a classe (objeto) <em>PessoasController</em> e herdamos a classe base <em>Controller</em><br>
+					<small class="marca-texto"><b>Todos</b> os controllers <b class="underline">deverão</b> começar com a(s) primeira(s) letras iniciais maiúsculas e ao final juntar com a palavra <em>Controler</em>, também com a inicial em maiúsculo</small>
+				</li>
+				<li>
+					Na linha 4 criamos o método (função) <em>index()</em><br>
+					<small class="marca-texto"><b>Todos</b> os controllers <b class="underline">deverão</b> ter um método <em>index()</em>, pois será o método padrão caso não for informado nenhum outro método</small>
+				</li>
+				<li>Na linha 6 fizemos a chamada do método <em>loadView()</em> da aplicação</li>
+				<li>Como parâmetro passamos uma string com o nome do arquivo da nossa view <code>pessoas.php</code> mas sem a extensão <em>.php</em></li>
+				<li>Este método se encarregará de formatar a string carregar a nossa view <em>pessoas.php</em></li>
+				<li>Por fim acesse a URL: <a href="http://localhost/prontuariodigital/pessoas">localhost/prontuariodigital/pessoas</a></li>
+			</ol>
+
+			<h3>Criando a <b>M</b>odel</h3>
+
+			<p class="sequence">3) Crie um arquivo chamado <em>PessoasModel.php</em> dentro da pasta models com o seguinte código:</p>
+
+<pre>
+&lt;?php
+
+class UsuariosModel extends Model
+{
+    private $nome;
+    private $dataNascimento;
+
+	public function __construct($db = false, $controller = null) 
+	{
+		// Configura o DB (PDO)
+        $this->db = $db;
+
+	    // Chamar o controller
+	    $this->controller = $controller;
+
+	    // Configura os parâmetros
+	    $this->parametros = $this->controller->parametros;
+
+	    // Configura os dados do usuário
+	    $this->userdata = $this->controller->userdata;
+	}
+
+	/*--------------------------
+	 * Getters/Setters 
+	 *------------------------*/
+	public function getNome() 
+	{
+	    return $this->nome;
+	}
+
+	public function setNome($nome)
+	{
+	    $this->nome = $nome;
+	}
+
+	public function getDataNascimento() 
+	{
+	    return $this->dataNascimento;
+	}
+
+	public function setDataNascimento($dataNascimento)
+	{
+	    $this->dataNascimento = $dataNascimento;
+	}
+
+	/*---------------------------
+	 * Regras de negócio 
+	 *--------------------------*/
+    public function inserir()
+    {
+        // Script para inserir os dados da pessoa no banco de dados 
+    }
+
+	public function calcularIdade() 
+	{
+	    // Script para calcular a idade da pessoa de acordo com a data de nascimento
+	}
+
+}</pre>
+			<div class="alert alert-warning">
+			    <b>Atenção! </b>Toda <em>Model</em> <span class="underline">deve</span> ser criada na pasta models do projeto e seu nome deve seguir o padrão <em>ClasseModel.php</em> e herdar a classe Model principal
+		    </div>
+
+			<b>O que aconteceu:</b>
+			<ol>
+				<li>
+					Na linha 2 criamos a classe (objeto) <em>PessoasModel</em> e herdamos a classe base <em>Model</em><br>
+					<small class="marca-texto"><b>Todas</b> as models, assim como os controllers, <b class="underline">deverão</b> começar com a(s) primeira(s) letras iniciais maiúsculas e ao final juntar com a palavra <em>Model</em>, também com a inicial em maiúsculo</small>
+				</li>
+				<li>
+					Na linha 5 e 6 criamos duas propriedades <span class="underline">privadas</span> do objeto Pessoa <em>nome</em> e <em>dataNascimento</em> <span class="underline">(a maioria das propriedades serão privadas para evitar o acesso direto à elas)</span><br>
+					<small class="marca-texto">
+						Por padrão as propriedades <b class="underline">devem</b> começar com a letra mínuscula da primeira palavra e as demais com maiúscula
+					</small>
+				</li>
+				<li>Na linha 8 criamos (sobreescrevemos) o nosso construtor padrão para iniciarmos algumas variáveis que serão úteis para trabalharmos com a model</li>
+				<li>Da linha 26 té a 44 criamos os métodos getters e setters para manipularmos os dados do objeto enquanto existentes (estes métodos <span class="underline">devem</span> ter acesso público para a manipulação dos dados do objeto)</li>
+				<small class="marca-texto">
+					Por padrão os métodos, assim como as propriedades, <b class="underline">devem</b> começar com a letra mínuscula da primeira palavra e as demais com maiúscula
+				</small>
+				<li>Apartir da linha 49 ficará toda a regra de negócio da aplicação onde esta, irá se comunicar com o banco para buscar dados, fazer cálculos para retornar algum resultado, etc (o tipo de acesso dependerá da regra de negócio)</li>
+			</ol>
+<!--
+			<h3>Organização das views</h3>
+
+			<p class="sequence">4) Crie uma pasta chamada pessoas</p>
+
+			<p class="sequence">5) Renomei a view <em>pessoas.php</em> para <em>cadastro.php</em> e coloque dentro da pasta pessoas</p>
+
+			<p class="sequence">6) Altere o conteúdo do <em>cadastro.php para o seguinte código:</em> </p>
+<pre>
+&lt;form action="./pessoas/cadastro" method="post"&gt;
+    Nome: &lt;input type="text" id="nome" name="nome"&gt;
+    Data de nascimento: &lt;input type="text" id="data_nascimento" name="data_nascimento"&gt;
+    &lt;input type="submit" value="Cadastrar"&gt;
+&lt;/form&gt;</pre>
+
+			<h3>Criando as ações na controller para que o usuário interaja com a aplicação</h3>
+
+			<p class="sequence">5) Adicione o seguinte código no arquivo <em>PessoasController.php</em>:</p>
+
+<pre>
+/* Todo o código escrito até agora */
+
+public function cadastro()
+{
+    $this->title = "Cadastro de pessoas"; // Título da página
+
+    $pessoa = $this->loadModel('Pessoas'); // Carregamento da Model
+
+    //$pessoa->setNome("Son Goku");
+    //$pessoa->setIdade(32);
+
+    $sayajin = $model->inserir(); // Retorno dos dados da pessoa criada em um array
+
+    $this->loadView('pessoas.cadastro', $sayajin);
+}
+</pre>
+-->
+		</div><!-- /.row -->
+	</div><!-- /.container -->
+
+	<script type="text/javascript" src="jquery/jquery-1.12.3.min.js"></script>
+	<script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script><script>
+	$(function() {
+		var pre = document.getElementsByTagName('pre'),
+		pl = pre.length;
+		for (var i = 0; i < pl; i++) {
+			pre[i].innerHTML = '<span class="line-number"></span>' + pre[i].innerHTML + '<span class="cl"></span>';
+			var num = pre[i].innerHTML.split(/\n/).length;
+			for (var j = 0; j < num; j++) {
+				var line_num = pre[i].getElementsByTagName('span')[0];
+				line_num.innerHTML += '<span>' + (j + 1) + '</span>';
+			}
+		}
+	});
+</script>
+</body>
+</html>
